@@ -4,6 +4,10 @@ Open source phone verification software using Django and Twilio.
 ### Prerequisites
 Python version 3.5.2
 
+### Dependencies
+Django v1.8.18
+twilio v6.4.1
+
 ### Usage
 If python3 is the only python version installed, run Django server with:
 ```
