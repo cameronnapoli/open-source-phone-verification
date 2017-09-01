@@ -10,8 +10,7 @@ Django v1.8.18
 twilio v6.4.1
 
 ### Usage
-Run Django server with:
+cd into repo directory, and run Django server with:
 ```
-cd /dir/to/manage.py
 python manage.py runserver
 ```
