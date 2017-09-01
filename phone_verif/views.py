@@ -7,8 +7,12 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import VerificationRequestEntry
+from .models import UserVerified
+
 from random import choice
+
 from twilio.rest import Client
+
 from . import twilio_config
 
 

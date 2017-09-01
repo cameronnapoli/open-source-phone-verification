@@ -1,5 +1,5 @@
 # open-source-phone-verification
-Open source phone verification software using Django and Twilio.
+Open source phone verification software using Django and Twilio. Currently using SQLite for database, but this can be configured in phone_verif_proj/settings.py.
 
 ### Prerequisites
 Python version 3.5.2
