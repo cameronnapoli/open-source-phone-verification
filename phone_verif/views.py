@@ -5,6 +5,7 @@ Written by: Cameron Napoli
 
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 from .models import VerificationRequestEntry
 from .models import UserVerified
@@ -39,6 +40,7 @@ def index(request):
 
 
 # endpoint functions
+@login_required
 @csrf_exempt
 def send_number(request):
     '''
@@ -54,11 +56,6 @@ def send_number(request):
         return json_error_response("Request must be POST request.")
     if 'phone_number' not in request.POST:
         return json_error_response("POST parameter(s) not set.")
-
-
-    # TODO: add user auth
-
-
 
     # Initialize Twilio Client and variables
     to_number = request.POST['phone_number']
@@ -82,7 +79,7 @@ def send_number(request):
     # Store verification code
     verif_request_obj = VerificationRequestEntry()
     # TODO: add user from request auth
-    # verif_request_obj.user
+    verif_request_obj.user = request.user
     verif_request_obj.phone_number = to_number.strip(' \n')
     verif_request_obj.verification_code = verification_code.strip(' \n')
     verif_request_obj.save()
@@ -92,6 +89,7 @@ def send_number(request):
     return json_success_response()
 
 
+@login_required
 @csrf_exempt
 def verify_code(request):
     '''
@@ -110,9 +108,6 @@ def verify_code(request):
        'verification_code' not in request.POST:
         return json_error_response("POST parameter(s) not set.")
 
-
-    # TODO: add user auth
-
     # query to see if entry in verification codes, exist
     #   with both phone_number and verification_code
     query_set = VerificationRequestEntry.objects.filter(
@@ -126,9 +121,21 @@ def verify_code(request):
               (request.POST['phone_number'].strip(' \n'),
                request.POST['verification_code'].strip(' \n')))
 
-        # set user verified equal to true
+        # get User (user_id) from query_set
+
+        # find UserVerified with user_id
+
+        # set verified = True
+
+        # delete old values in VerificationRequestEntry
 
         return json_success_response()
     else:
         return json_error_response('Verification code for provided '
                                    'phone number not found.')
+
+def login_user(request):
+    ''' Here we could have a user authenticate and receive
+    a session token to authenticate their requests to verify
+    a phone number '''
+    pass
