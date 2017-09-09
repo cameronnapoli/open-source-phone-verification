@@ -22,7 +22,7 @@ class UserVerified(models.Model):
 class VerificationRequestEntry(models.Model):
     ''' DB to hold data for phone number, verification code,
         and User. '''
-    user = models.ForeignKey(UserVerified,
+    user = models.ForeignKey(User,
                              on_delete=models.SET_NULL,
                              null=True,
                              blank=True)

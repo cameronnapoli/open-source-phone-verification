@@ -16,5 +16,8 @@ twilio v6.4.1
 ### Run server
 cd into repo directory, and run Django server with:
 ```
+python manage.py makemigrations phone_verif
+python manage.py migrate
+python manage.py sqlmigrate phone_verif 0001
 python manage.py runserver
 ```

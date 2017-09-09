@@ -40,7 +40,6 @@ def index(request):
 
 
 # endpoint functions
-@login_required
 @csrf_exempt
 def send_number(request):
     '''
@@ -56,6 +55,8 @@ def send_number(request):
         return json_error_response("Request must be POST request.")
     if 'phone_number' not in request.POST:
         return json_error_response("POST parameter(s) not set.")
+    # user authentication needed
+
 
     # Initialize Twilio Client and variables
     to_number = request.POST['phone_number']
@@ -78,7 +79,6 @@ def send_number(request):
 
     # Store verification code
     verif_request_obj = VerificationRequestEntry()
-    # TODO: add user from request auth
     verif_request_obj.user = request.user
     verif_request_obj.phone_number = to_number.strip(' \n')
     verif_request_obj.verification_code = verification_code.strip(' \n')
@@ -89,7 +89,6 @@ def send_number(request):
     return json_success_response()
 
 
-@login_required
 @csrf_exempt
 def verify_code(request):
     '''
@@ -115,19 +114,28 @@ def verify_code(request):
         ).filter(
             verification_code=request.POST['verification_code'].strip(' \n')
         )
+        # TODO: add filter for user
 
     if len(query_set) > 0:
         print("  *** match found (phone_number, verification_code): (%s, %s)" %
               (request.POST['phone_number'].strip(' \n'),
                request.POST['verification_code'].strip(' \n')))
 
+        verif_request_entry = query_set[0]
+
         # get User (user_id) from query_set
+        usr_id = verif_request_entry.user_id
 
         # find UserVerified with user_id
+        user_verif_query = UserVerified.objects.get(
+            user_id=usr_id
+        )
 
         # set verified = True
+        user_verif_query.verified = True
+        user_verif_query.save()
 
-        # delete old values in VerificationRequestEntry
+        # TODO: delete old values in VerificationRequestEntry
 
         return json_success_response()
     else:
@@ -139,3 +147,20 @@ def login_user(request):
     a session token to authenticate their requests to verify
     a phone number '''
     pass
+
+def logout_user(request):
+    ''' Destroy authentication with associated user '''
+    pass
+
+def register_user(request):
+    ''' Here we might add logic to create a corresponding
+    UserVerified object with the newly created user '''
+
+    ### FOR EXAMPLE
+    usr_id = 0 # whatever the primary key (id) of the user is
+
+    # create user verified objects
+    user_verif = UserVerified()
+    user_verif.user_id = usr_id
+    user_verif.verified = False
+    user_verif.save()
